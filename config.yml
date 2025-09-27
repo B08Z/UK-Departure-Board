@@ -1,0 +1,33 @@
+# Local defaults – merged with .env and remote overrides
+rtt:
+  base_url: ""
+  username: ""
+  password: ""
+
+tfl:
+  app_id: ""
+  app_key: ""
+
+defaults:
+  national_rail:
+    crs: "WNC"
+    to_crs: "PAD"
+    arrivals: false
+    limit: 6
+  tube:
+    stop_point_id: "940GZZLUSWK"
+    limit: 6
+
+ui:
+  interleave: false
+  font_path: "fonts/DotMatrix-Regular.ttf"
+  font_bold_path:
+  font_size: 22
+  line_height: 24
+  left_margin: 4
+
+remote:
+  enabled: false
+  url: ""
+  timeout_seconds: 5
+  cache_ttl_seconds: 60
