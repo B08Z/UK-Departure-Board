@@ -1,0 +1,5 @@
+requests==2.32.3
+PyYAML==6.0.2
+Pillow==10.3.0
+luma.core==2.4.0
+luma.oled==3.13.0
