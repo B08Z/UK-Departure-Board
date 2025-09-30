@@ -1,0 +1,29 @@
+# syntax=docker/dockerfile:1
+# Pi Zero W (ARMv6) base
+FROM balenalib/raspberry-pi-python:3.11-bullseye-run
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    TZ=Europe/London
+
+# System deps (Debian)
+RUN install_packages \
+      tzdata ca-certificates \
+      libjpeg62-turbo zlib1g libfreetype6 \
+      gcc build-essential python3-dev \
+      alsa-utils mpg123
+
+WORKDIR /app
+
+COPY requirements.txt .
+RUN pip3 install --no-cache-dir -r requirements.txt
+
+# App sources
+COPY rtt.py tube_from_london_underground_py3.py board_sources.py remote_config.py ./
+COPY oled_device.py oled_runner.py LondonUndergroundPy3.py announcer.py ./
+COPY config.yml ./config.yml
+
+# Fonts + audio cache
+RUN mkdir -p /app/fonts /app/cache/audio
+
+CMD ["python3", "-u", "oled_runner.py"]
