@@ -5,21 +5,30 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     TZ=Europe/London
 
+# 🔧 Build & runtime deps (Debian-based)
+# - image/ft libs for Pillow: libjpeg, zlib, freetype, openjp2, tiff
+# - toolchain for building wheels: gcc, build-essential, python3-dev, pkg-config
+# - GPIO/SPI Python runtime: python3-rpi.gpio, python3-spidev
+# - audio (can keep, harmless if unused): alsa-utils, mpg123
 RUN install_packages \
       tzdata ca-certificates \
-      libjpeg62-turbo zlib1g libfreetype6 \
-      gcc build-essential python3-dev \
+      libjpeg62-turbo-dev zlib1g-dev libfreetype6-dev \
+      libopenjp2-7-dev libtiff5-dev \
+      gcc build-essential python3-dev pkg-config \
+      python3-rpi.gpio python3-spidev \
       alsa-utils mpg123
 
 WORKDIR /app
 
+# 🆙 Make sure pip toolchain is fresh before installing requirements
 COPY requirements.txt .
-RUN pip3 install --no-cache-dir -r requirements.txt
+RUN python3 -m pip install --upgrade pip setuptools wheel && \
+    pip3 install --no-cache-dir -r requirements.txt
 
-COPY rtt.py tube_from_london_underground_py3.py board_sources.py remote_config.py ./
-COPY oled_device.py oled_runner.py LondonUndergroundPy3.py ./
-COPY config.yml ./config.yml
+# Copy the whole repo (safer than listing files)
+COPY . .
 
+# Runtime dirs
 RUN mkdir -p /app/fonts /app/cache/audio
 
 CMD ["python3", "-u", "oled_runner.py"]
