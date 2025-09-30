@@ -14,7 +14,6 @@ permissions:
   packages: write
 
 jobs:
-  # -------- Pi Zero W (arm/v6) --------
   pi0w:
     runs-on: ubuntu-22.04
     steps:
@@ -44,7 +43,6 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
-  # -------- Other platforms (multi-arch) --------
   multiarch:
     runs-on: ubuntu-22.04
     steps:
