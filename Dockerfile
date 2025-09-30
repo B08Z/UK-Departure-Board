@@ -1,29 +1,25 @@
-# Raspberry Pi Zero W (ARMv6)
-FROM arm32v6/python:3.9-alpine
+# syntax=docker/dockerfile:1
+FROM python:3.11-slim
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     TZ=Europe/London
 
-# System deps (Pillow, luma.oled, fonts, tzdata)
-RUN apk add --no-cache \
-      tzdata \
-      libjpeg-turbo freetype \
-      jpeg-dev zlib-dev freetype-dev \
-      linux-headers
+RUN apt-get update && apt-get install -y --no-install-recommends \
+      tzdata ca-certificates \
+      libjpeg62-turbo-dev zlib1g-dev libfreetype6-dev \
+      alsa-utils mpg123 \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
-# Python deps
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy your Python code
 COPY rtt.py tube_from_london_underground_py3.py board_sources.py remote_config.py ./
 COPY oled_device.py oled_runner.py LondonUndergroundPy3.py ./
 COPY config.yml ./config.yml
 
-# Fonts dir (mount or bake in)
-RUN mkdir -p /app/fonts
+RUN mkdir -p /app/fonts /app/cache/audio
 
 CMD ["python", "-u", "oled_runner.py"]
